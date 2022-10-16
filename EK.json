@@ -1,0 +1,10 @@
+{
+    "1": {
+        "name": "teste",
+        "color": "red",
+        "duration": 1000,
+        "cooldown": 1000,
+        "type": "",
+        "crosshair": true
+    }
+}

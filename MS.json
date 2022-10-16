@@ -1,0 +1,104 @@
+{
+    "r": {
+        "name": "utamo vita",
+        "color": "blue",
+        "duration": 180000,
+        "cooldown": 15000,
+        "type": null
+    },
+    "ctrl+v": {
+        "name": "utani hur",
+        "color": "green",
+        "duration": 32000,
+        "cooldown": 2000,
+        "type": "haste"
+    },
+    "v": {
+        "name": "utani gran hur",
+        "color": "green",
+        "duration": 22000,
+        "cooldown": 2000,
+        "type": "haste"
+    },
+    "1": {
+        "name": "exori strike",
+        "color": "brown",
+        "duration": 2000,
+        "cooldown": 2000,
+        "property": "attack"
+    },
+    "3": {
+        "name": "exevo gran vis lux",
+        "color": "brown",
+        "duration": 4000,
+        "cooldown": 2000,
+        "property": "attack"
+    },
+    "4": {
+        "name": "exevo vis hur",
+        "color": "purple",
+        "duration": 8000,
+        "cooldown": 2000,
+        "property": "attack"
+    },
+    "5": {
+        "name": "exevo gran flam hur",
+        "color": "red",
+        "duration": 4000,
+        "cooldown": 2000,
+        "type": null,
+        "property": "attack"
+    },
+    "'": {
+        "name": "exura",
+        "color": "blue",
+        "duration": 1000,
+        "cooldown": 0,
+        "type": null
+    },
+    "g": {
+        "name": "exura gran",
+        "color": "blue",
+        "duration": 1000,
+        "cooldown": 0,
+        "type": null
+    },
+    "f": {
+        "name": "mana potion",
+        "color": "black",
+        "duration": 1000,
+        "cooldown": 0,
+        "type": null
+    },
+    "alt+l": {
+        "name": "mastermind potion",
+        "color": "pink",
+        "duration": 600000,
+        "cooldown": 0,
+        "type": null,
+        "property": "timer"
+    },
+    "t": {
+        "name": "ultimate explosion",
+        "color": "red",
+        "duration": 40000,
+        "cooldown": 4000,
+        "type": "",
+        "property": "attack"
+    },
+    "f1": {
+        "name": "SD RUNE",
+        "color": "BLACK",
+        "duration": 2000,
+        "cooldown": 0,
+        "type": ""
+    },
+    "f12": {
+        "name": "SD RUNE",
+        "color": "BLACK",
+        "duration": 2000,
+        "cooldown": 2000,
+        "type": "",
+        "property": "attack"
+    }
+}
