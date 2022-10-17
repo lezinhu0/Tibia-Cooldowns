@@ -1,10 +1,130 @@
 {
-    "1": {
-        "name": "teste",
+    "f1": {
+        "name": "utito tempo",
         "color": "red",
+        "duration": 10000,
+        "cooldown": 2000,
+        "type": "utito"
+    },
+    "f2": {
+        "name": "utamo tempo",
+        "color": "blue",
+        "duration": 4500,
+        "cooldown": 2000,
+        "type": "utito"
+    },
+    "v": {
+        "name": "utani tempo hur",
+        "color": "green",
+        "duration": 4500,
+        "cooldown": 2000,
+        "type": "haste"
+    },
+    "ctrl+v": {
+        "name": "utani hur",
+        "color": "green",
+        "duration": 32000,
+        "cooldown": 2000,
+        "type": "haste"
+    },
+    "ctrl+'": {
+        "name": "utura gran",
+        "color": "green",
+        "duration": 60000,
+        "cooldown": 0
+    },
+    "'": {
+        "name": "exura ico",
+        "color": "blue",
         "duration": 1000,
         "cooldown": 1000,
+        "property": "healing"
+    },
+    "1": {
+        "name": "exori ico",
+        "color": "red",
+        "duration": 6000,
+        "cooldown": 2000,
+        "type": null,
+        "property": "attack"
+    },
+    "2": {
+        "name": "exori hur",
+        "color": "red",
+        "duration": 6000,
+        "cooldown": 2000,
+        "type": null,
+        "property": "attack"
+    },
+    "3": {
+        "name": "exori min",
+        "color": "purple",
+        "duration": 6000,
+        "cooldown": 2000,
+        "type": null,
+        "property": "attack"
+    },
+    "4": {
+        "name": "exori",
+        "color": "red",
+        "duration": 4000,
+        "cooldown": 2000,
+        "type": null,
+        "property": "attack"
+    },
+    "5": {
+        "name": "exori gran",
+        "color": "orange",
+        "duration": 6000,
+        "cooldown": 2000,
+        "type": null,
+        "property": "attack"
+    },
+    "t": {
+        "name": "exori mas",
+        "color": "brown",
+        "duration": 8000,
+        "cooldown": 2000,
+        "type": null,
+        "property": "attack"
+    },
+    "r": {
+        "name": "exeta res",
+        "color": "pink",
+        "duration": 4000,
+        "cooldown": 2000,
+        "type": null
+    },
+    "alt+l": {
+        "name": "skill food",
+        "color": "pink",
+        "duration": 600000,
+        "cooldown": 0,
+        "type": null
+    },
+    "f": {
+        "name": "POTION",
+        "color": "black",
+        "duration": 1000,
+        "cooldown": 1000,
+        "type": "item"
+    },
+    "f11": {
+        "name": "RUNE",
+        "color": "PURPLE",
+        "duration": 2000,
+        "cooldown": 2000,
         "type": "",
+        "property": "attack",
         "crosshair": true
+    },
+    "f12": {
+        "name": "RUNE",
+        "color": "PURPLE",
+        "duration": 2000,
+        "cooldown": 2000,
+        "type": "",
+        "property": "attack",
+        "crosshair": false
     }
 }

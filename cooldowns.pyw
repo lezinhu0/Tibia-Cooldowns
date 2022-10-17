@@ -513,7 +513,7 @@ def key_press(key):
     keyName += key.name.lower()
 
     if keyName.lower() == config['quicklootHotkey']:
-        quickloot.quickLoot()
+        threading.Thread(target = quickloot.quickLoot).start()
         return
 
     selectedSpell = None
