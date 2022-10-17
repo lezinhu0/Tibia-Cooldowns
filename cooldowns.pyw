@@ -89,7 +89,7 @@ def saveSpells():
 
 chatOn = False
 
-processCheckInterval = 10000
+processCheckInterval = 100000
 
 mouseIsOver = False
 hoverCounter = 0
