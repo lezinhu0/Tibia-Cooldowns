@@ -100,7 +100,7 @@ screen.attributes('-fullscreen', True)
 screen.attributes('-transparentcolor', '#eee')
 screen.attributes('-alpha', 0.7)
 screen.attributes('-topmost', True)
-screen.overrideredirect(1)
+#screen.overrideredirect(1)
 
 offsetX = 0
 offsetY = 0
@@ -659,7 +659,12 @@ while running:
         canvas.create_rectangle(1000 + 150 - 30 + offsetX, 350 + offsetY, 1000 + 150 + offsetX - 20, 350 + offsetY + 10, fill='green')
 
         if attackCd:
-            #attackCd.draw(canvas, 1000 + offsetX, 320 + offsetY)
+            tempAttackCd = spell.Spell(name='attackCd', color='yellow', duration=attackCd.duration, cooldown=attackCd.cooldown, width=150, height=5)
+            tempAttackCd.start = attackCd.start
+            tempAttackCd.x = 1000 + offsetX
+            tempAttackCd.y = 320 + offsetY
+            tempAttackCd.draw(canvas)
+
             attackCd.x = 1000 + offset_status_x
             attackCd.y = 320 + offset_status_y
             canvas.create_rectangle(attackCd.x, attackCd.y, attackCd.x + attackCd.width, attackCd.y + attackCd.height, fill='gray')
@@ -672,6 +677,12 @@ while running:
         
         if healingCd:
             #healingCd.draw(canvas, 1000 + offsetX, 325 + offsetY)
+            tempHealing = spell.Spell(name='healingCd', color='green', duration=healingCd.duration, cooldown=healingCd.cooldown, width=150, height=5)
+            tempHealing.start = healingCd.start
+            tempHealing.x = 1000 + offsetX
+            tempHealing.y = 325 + offsetY
+            tempHealing.draw(canvas)
+
             healingCd.x = 1000 + offset_status_x
             healingCd.y = 325 + offset_status_y
             canvas.create_rectangle(healingCd.x, healingCd.y, healingCd.x + healingCd.width, healingCd.y + healingCd.height, fill='gray')
