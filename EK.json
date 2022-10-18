@@ -126,5 +126,14 @@
         "type": "",
         "property": "attack",
         "crosshair": false
+    },
+    "alt+0": {
+        "name": "TESTE",
+        "color": "RED",
+        "duration": 1000,
+        "cooldown": 1000,
+        "type": "",
+        "crosshair": false,
+        "property": "timer"
     }
 }

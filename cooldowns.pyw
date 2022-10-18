@@ -1,7 +1,7 @@
 from audioop import cross
 import json
 import tkinter as tk
-from tkinter import ttk
+from tkinter import BooleanVar, ttk
 import spell
 import keyboard
 import psutil
@@ -347,7 +347,7 @@ def buttonPressed(event):
         colorEntry = tk.Entry(form)
         colorEntry.grid(row = 4, column = 1)
 
-        tk.Label(form, text='type (replace effect)').grid(row = 5, column = 0, sticky=tk.W)
+        tk.Label(form, text='type (substitute effect)').grid(row = 5, column = 0, sticky=tk.W)
         typeEntry = tk.Entry(form)
         typeEntry.grid(row = 5, column = 1)
 
@@ -396,10 +396,15 @@ def buttonPressed(event):
         combobox.set('-')
         combobox.grid(row = 8, column = 1)
 
-        tk.Label(form, text='Crosshair?').grid(row = 9, column = 0, sticky=tk.W)
+        tk.Label(form, text='Crosshair').grid(row = 9, column = 0, sticky=tk.W)
         crosshairVar = tk.BooleanVar()
         crossHairCheck = tk.Checkbutton(form, variable=crosshairVar)
         crossHairCheck.grid(row = 9, column = 1, sticky='w')
+
+        tk.Label(form, text='Play alert').grid(row = 10, column = 0, sticky=tk.W)
+        alertVar = BooleanVar()
+        alertCheck = tk.Checkbutton(form, variable=alertVar)
+        alertCheck.grid(row = 10, column = 1, sticky='w')
 
         def addHk():
             spells[hotkeyEnty.get()] = { 'name': textoEntry.get(), 'color': colorEntry.get(), 'duration': int(durationEntry.get()) * 1000,
@@ -412,13 +417,16 @@ def buttonPressed(event):
                     spells[hotkeyEnty.get()]['property'] = 'healing'
 
             spells[hotkeyEnty.get()]['crosshair'] = crosshairVar.get()
+            
+            if alertVar.get():
+                spells[hotkeyEnty.get()]['property'] = 'timer'
 
             form.destroy()
             saveSpells()
             return
 
         buttonsCanvas = tk.Frame(form, bg='black')
-        buttonsCanvas.grid(row = 10, column = 0, columnspan=2)
+        buttonsCanvas.grid(row = 11, column = 0, columnspan=2)
 
         tk.Button(buttonsCanvas, text='add', command=addHk, width=15).pack(side = tk.LEFT, fill = 'x', expand = True)
         tk.Button(buttonsCanvas, text='exit', command=form.destroy, width=15).pack(side = tk.RIGHT, fill = 'x', expand = True)
