@@ -1,5 +1,6 @@
 from audioop import cross
 import json
+from shutil import move
 import tkinter as tk
 from tkinter import BooleanVar, ttk
 import spell
@@ -14,7 +15,7 @@ import time
 import quickloot
 from pynput import mouse
 
-requireTibia = False
+requireTibia = True
 running = True
 
 global spells
@@ -104,13 +105,18 @@ screen.overrideredirect(1)
 offsetX = 0
 offsetY = 0
 
+move_status = False
+offset_status_x = 0
+offset_status_y = 0
+
 pressedX = 0
 pressedY = 0
 
 activeSpells = []
 
-attackCd = None
-healingCd = None
+attackCd = spell.Spell('attackCd', 'yellow', 10000, 10000, height=5)
+healingCd = spell.Spell('healingCd', 'green', 10000, 10000, height=5)
+        
 
 def tibiaIsRunning():
     print('looking for tibia...')
@@ -128,6 +134,15 @@ def buttonPressed(event):
     global offsetY
     global pressedX
     global chatOn
+    global attackCd
+    global healingCd
+    global move_status
+
+    if attackCd.intersects(event.x, event.y) or healingCd.intersects(event.x, event.y):
+        print('clicked on status')
+        move_status = True
+        return
+
 
     if event.x >= 1000 + offsetX and event.x <= 1000 + offsetX + 10 and event.y >= 350 + offsetY and event.y <= 350 + offsetY + 10:
         chatOn = not chatOn
@@ -445,14 +460,42 @@ def rightButtonPressed(event):
             activeSpells.remove(tempSpell)
     
 
+def buttonReleased(event):
+    global move_status
+    move_status = False
+
 screen.bind('<Button-1>', buttonPressed)
+screen.bind('<ButtonRelease>', buttonReleased)
 screen.bind('<Button-3>', rightButtonPressed)
 
 def mouseDragged(event):
+    global move_status
+
     global offsetX
-    offsetX = event.x - pressedX
     global offsetY
+
+    global offset_status_x
+    global offset_status_y
+
+    if move_status:
+        attackCd.width = 50
+        healingCd.width = 50
+        attackCd.height = 3
+        healingCd.height = 3
+        offset_status_x = event.x - pressedX
+        offset_status_y = event.y - pressedY
+        return
+    else:
+        attackCd.width = 150
+        healingCd.width = 150
+        attackCd.height = 5
+        healingCd.height = 5
+
+    offsetX = event.x - pressedX
     offsetY = event.y - pressedY
+
+    offset_status_x = event.x - pressedX
+    offset_status_y = event.y - pressedY
 
 screen.bind('<B1-Motion>', mouseDragged)
 
@@ -492,10 +535,10 @@ def addSpell(tempSpell):
 
     if tempSpell.property == 'attack':
         global attackCd
-        attackCd = spell.Spell('attackCd', 'yellow', tempSpell.cooldown, 2000, height=5)
+        attackCd = spell.Spell('attackCd', 'yellow', tempSpell.cooldown, 2000, height=attackCd.height, width = attackCd.width)
     if tempSpell.property == 'healing':
         global healingCd
-        healingCd = spell.Spell('healingCd', 'green', tempSpell.cooldown, 1000, height=5)
+        healingCd = spell.Spell('healingCd', 'green', tempSpell.cooldown, 1000, height=healingCd.height, width = healingCd.width)
 
 
 def key_press(key):
@@ -575,7 +618,7 @@ while running:
     if len(activeSpells) == 0 and current_mili_time() % processCheckInterval == 0:
         threading.Thread(target=lookForTibia).start()
 
-    if requireTibia and mouseX >= 1000 + offsetX and mouseX <= 1150 + offsetX and mouseY <= 360 + offsetY and mouseY >= 320 - (len(activeSpells) * 20) + offsetY:
+    if requireTibia and ((mouseX >= 1000 + offsetX and mouseX <= 1150 + offsetX and mouseY <= 360 + offsetY and mouseY >= 320 - (len(activeSpells) * 20) + offsetY) or attackCd.intersects(mouseX, mouseY) or healingCd.intersects(mouseX, mouseY)):
         mouseIsOver = True
         hoverCounter += 1
     else:
@@ -592,7 +635,10 @@ while running:
     if not mouseIsOver or keyboard.is_pressed('alt') or not requireTibia:
         lastHeight = 0
         for i, tempSpell in enumerate(activeSpells):
-            tempSpell.draw(canvas, 1000 + offsetX, 300 - ((i) * lastHeight) + offsetY)
+            #tempSpell.draw(canvas, 1000 + offsetX, 300 - ((i) * lastHeight) + offsetY)
+            tempSpell.x = 1000 + offsetX
+            tempSpell.y = 300 - ((i) * lastHeight) + offsetY
+            tempSpell.draw(canvas)
             lastHeight = tempSpell.height
 
             if tempSpell.timeLeft() <= 0:
@@ -613,7 +659,11 @@ while running:
         canvas.create_rectangle(1000 + 150 - 30 + offsetX, 350 + offsetY, 1000 + 150 + offsetX - 20, 350 + offsetY + 10, fill='green')
 
         if attackCd:
-            attackCd.draw(canvas, 1000 + offsetX, 320 + offsetY)
+            #attackCd.draw(canvas, 1000 + offsetX, 320 + offsetY)
+            attackCd.x = 1000 + offset_status_x
+            attackCd.y = 320 + offset_status_y
+            canvas.create_rectangle(attackCd.x, attackCd.y, attackCd.x + attackCd.width, attackCd.y + attackCd.height, fill='gray')
+            attackCd.draw(canvas)
             if attackCd.timeLeft() <= 0:
                 if round(attackCd.timeLeft(), 1) * 10 % 2 == 0:
                     attackCd.color = 'yellow'
@@ -621,7 +671,11 @@ while running:
                     attackCd.color = 'red'
         
         if healingCd:
-            healingCd.draw(canvas, 1000 + offsetX, 325 + offsetY)
+            #healingCd.draw(canvas, 1000 + offsetX, 325 + offsetY)
+            healingCd.x = 1000 + offset_status_x
+            healingCd.y = 325 + offset_status_y
+            canvas.create_rectangle(healingCd.x, healingCd.y, healingCd.x + healingCd.width, healingCd.y + healingCd.height, fill='gray')
+            healingCd.draw(canvas)
             if healingCd.timeLeft() <= 0:
                 healingCd.color = 'white'
 
