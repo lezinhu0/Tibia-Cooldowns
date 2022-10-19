@@ -45,6 +45,10 @@ config = {
     }
 }
 
+def saveConfigs():
+    with open('config.json', 'w') as outfile:
+        outfile.write(json.dumps(config, indent=4))
+
 try:
     with open('config.json', 'r') as configFile:
         tempConfig = json.load(configFile)
@@ -59,9 +63,21 @@ try:
 except:
     pass
 
-def saveConfigs():
-    with open('config.json', 'w') as outfile:
-        outfile.write(json.dumps(config, indent=4))
+try:
+    print(config['lootPositions']['pos1']['x'] == 0)
+except:
+    config['lootPositions'] = {
+        "pos7": { 'position': 7, 'x': 871, 'y': 361 },
+        "pos8": { 'position': 8, 'x': 943, 'y': 361 },
+        "pos9": { 'position': 9, 'x': 1018, 'y': 361 },
+        "pos4": { 'position': 4, 'x': 871, 'y': 436 },
+        "pos5": { 'position': 5, 'x': 943, 'y': 436 },
+        "pos6": { 'position': 6, 'x': 1018, 'y': 436 },
+        "pos1": { 'position': 1, 'x': 871, 'y': 507 },
+        "pos2": { 'position': 2, 'x': 943, 'y': 507 },
+        "pos3": { 'position': 3, 'x': 1018, 'y': 507 }
+    }
+    saveConfigs()
 
 preset = 'RP'
 
