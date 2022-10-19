@@ -155,13 +155,11 @@ def buttonPressed(event):
     global updatingLootPositions
 
     if attackCd.intersects(event.x, event.y) or healingCd.intersects(event.x, event.y):
-        print('clicked on status')
         move_status = True
         return
 
     for position in config['lootPositions']:
         if event.x >= position['x'] - 10 and event.x <= position['x'] + 10 and event.y >= position['y'] - 10 and event.y <= position['y'] + 10:
-            print('clicked on a loot position')
             selectedPosition = position
             return
 
@@ -716,7 +714,6 @@ while running:
                     attackCd.color = 'red'
         
         if healingCd:
-            #healingCd.draw(canvas, 1000 + offsetX, 325 + offsetY)
             tempHealing = spell.Spell(name='healingCd', color='green', duration=healingCd.duration, cooldown=healingCd.cooldown, width=150, height=5)
             tempHealing.start = healingCd.start
             tempHealing.x = 1000 + offsetX
