@@ -22,6 +22,8 @@ global spells
 spells = {}
 
 crosshair = None
+updatingLootPositions = False
+selectedPosition = None
 
 config = {
     'world': 'venebra',
@@ -29,7 +31,18 @@ config = {
     'lastTimerName': '',
     'lastTimerDuration': 0,
     'lastTimerColor': '',
-    'quicklootHotkey': 'alt+q'
+    'quicklootHotkey': 'alt+q',
+    'lootPositions' : [
+        { 'x': 1022, 'y': 504 },
+        { 'x': 936, 'y': 507 },
+        { 'x': 872, 'y': 507 },
+        { 'x': 1016, 'y': 436 },
+        { 'x': 942, 'y': 437 },
+        { 'x': 871, 'y': 436 },
+        { 'x': 1018, 'y': 372 },
+        { 'x': 943, 'y': 370 },
+        { 'x': 856, 'y': 361 }
+    ]
 }
 
 try:
@@ -42,6 +55,7 @@ try:
         if tempConfig['lastTimerDuration']: config['lastTimerDuration'] = tempConfig['lastTimerDuration']
         if tempConfig['lastTimerColor']: config['lastTimerColor'] = tempConfig['lastTimerColor']
         if tempConfig['quicklootHotkey']: config['quicklootHotkey'] = tempConfig['quicklootHotkey']
+        if tempConfig['lootPositions']: config['lootPositions'] = tempConfig['lootPositions']
 except:
     pass
 
@@ -137,12 +151,28 @@ def buttonPressed(event):
     global attackCd
     global healingCd
     global move_status
+    global selectedPosition
+    global updatingLootPositions
 
     if attackCd.intersects(event.x, event.y) or healingCd.intersects(event.x, event.y):
         print('clicked on status')
         move_status = True
         return
 
+    for position in config['lootPositions']:
+        if event.x >= position['x'] - 10 and event.x <= position['x'] + 10 and event.y >= position['y'] - 10 and event.y <= position['y'] + 10:
+            print('clicked on a loot position')
+            selectedPosition = position
+            return
+
+
+    if event.x >= 1000 + 150 - 40 + offsetX and event.x <= 1000 + 150 + offsetX - 30 and event.y >= 350 + offsetY and event.y <= 350 + offsetY + 10:
+        if updatingLootPositions:
+            selectedPosition = None
+            saveConfigs()
+
+        updatingLootPositions = not updatingLootPositions
+        return
 
     if event.x >= 1000 + offsetX and event.x <= 1000 + offsetX + 10 and event.y >= 350 + offsetY and event.y <= 350 + offsetY + 10:
         chatOn = not chatOn
@@ -464,6 +494,8 @@ def buttonReleased(event):
     global move_status
     move_status = False
 
+    selectedPosition = None
+
 screen.bind('<Button-1>', buttonPressed)
 screen.bind('<ButtonRelease>', buttonReleased)
 screen.bind('<Button-3>', rightButtonPressed)
@@ -477,11 +509,16 @@ def mouseDragged(event):
     global offset_status_x
     global offset_status_y
 
+    if selectedPosition != None:
+        selectedPosition['x'] = event.x
+        selectedPosition['y'] = event.y
+        return
+
     if move_status:
         attackCd.width = 50
         healingCd.width = 50
-        attackCd.height = 3
-        healingCd.height = 3
+        attackCd.height = 4
+        healingCd.height = 4
         offset_status_x = event.x - pressedX
         offset_status_y = event.y - pressedY
         return
@@ -564,7 +601,7 @@ def key_press(key):
     keyName += key.name.lower()
 
     if keyName.lower() == config['quicklootHotkey']:
-        threading.Thread(target = quickloot.quickLoot).start()
+        threading.Thread(target = lambda: quickloot.quickLoot(config['lootPositions'])).start()
         return
 
     selectedSpell = None
@@ -610,6 +647,8 @@ def lookForTibia():
         requireTibia = True
     else:
         requireTibia = False
+
+lookForTibia()
 
 while running:
     mouseX = pyautogui.position().x
@@ -657,6 +696,7 @@ while running:
         canvas.create_rectangle(1000 + 150 - 10 + offsetX, 350 + offsetY, 1000 + 150 + offsetX, 350 + offsetY + 10, fill='blue')
         canvas.create_rectangle(1000 + 150 - 20 + offsetX, 350 + offsetY, 1000 + 150 + offsetX - 10, 350 + offsetY + 10, fill='yellow')
         canvas.create_rectangle(1000 + 150 - 30 + offsetX, 350 + offsetY, 1000 + 150 + offsetX - 20, 350 + offsetY + 10, fill='green')
+        canvas.create_rectangle(1000 + 150 - 40 + offsetX, 350 + offsetY, 1000 + 150 + offsetX - 30, 350 + offsetY + 10, fill='orange')
 
         if attackCd:
             tempAttackCd = spell.Spell(name='attackCd', color='yellow', duration=attackCd.duration, cooldown=attackCd.cooldown, width=150, height=5)
@@ -690,4 +730,8 @@ while running:
             if healingCd.timeLeft() <= 0:
                 healingCd.color = 'white'
 
+
+    if updatingLootPositions:
+        for position in config['lootPositions']:
+            canvas.create_rectangle(position['x'] - 10, position['y'] - 10, position['x'] + 10, position['y'] + 10, fill='green')
     canvas.update()
