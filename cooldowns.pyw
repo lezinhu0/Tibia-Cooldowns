@@ -32,17 +32,17 @@ config = {
     'lastTimerDuration': 0,
     'lastTimerColor': '',
     'quicklootHotkey': 'alt+q',
-    'lootPositions' : [
-        { 'x': 1022, 'y': 504 },
-        { 'x': 936, 'y': 507 },
-        { 'x': 872, 'y': 507 },
-        { 'x': 1016, 'y': 436 },
-        { 'x': 942, 'y': 437 },
-        { 'x': 871, 'y': 436 },
-        { 'x': 1018, 'y': 372 },
-        { 'x': 943, 'y': 370 },
-        { 'x': 856, 'y': 361 }
-    ]
+    'lootPositions' : {
+        "pos7": { 'position': 7, 'x': 871, 'y': 361 },
+        "pos8": { 'position': 8, 'x': 943, 'y': 361 },
+        "pos9": { 'position': 9, 'x': 1018, 'y': 361 },
+        "pos4": { 'position': 4, 'x': 871, 'y': 436 },
+        "pos5": { 'position': 5, 'x': 943, 'y': 436 },
+        "pos6": { 'position': 6, 'x': 1018, 'y': 436 },
+        "pos1": { 'position': 1, 'x': 871, 'y': 507 },
+        "pos2": { 'position': 2, 'x': 943, 'y': 507 },
+        "pos3": { 'position': 3, 'x': 1018, 'y': 507 }
+    }
 }
 
 try:
@@ -158,10 +158,12 @@ def buttonPressed(event):
         move_status = True
         return
 
-    for position in config['lootPositions']:
-        if event.x >= position['x'] - 10 and event.x <= position['x'] + 10 and event.y >= position['y'] - 10 and event.y <= position['y'] + 10:
-            selectedPosition = position
-            return
+    if updatingLootPositions:
+        for key in config['lootPositions']:
+            position = config['lootPositions'][key]
+            if event.x >= position['x'] - 10 and event.x <= position['x'] + 10 and event.y >= position['y'] - 10 and event.y <= position['y'] + 10:
+                selectedPosition = position
+                return
 
 
     if event.x >= 1000 + 150 - 40 + offsetX and event.x <= 1000 + 150 + offsetX - 30 and event.y >= 350 + offsetY and event.y <= 350 + offsetY + 10:
@@ -508,8 +510,82 @@ def mouseDragged(event):
     global offset_status_y
 
     if selectedPosition != None:
-        selectedPosition['x'] = event.x
-        selectedPosition['y'] = event.y
+        pos_dx = selectedPosition['x'] - event.x
+        pos_dy = selectedPosition['y'] - event.y
+
+        if selectedPosition['position'] == 5:
+            selectedPosition['x'] = event.x
+            selectedPosition['y'] = event.y
+            for key in config['lootPositions']:
+                position = config['lootPositions'][key]
+                if position != selectedPosition:
+                    position['x'] -= pos_dx
+                    position['y'] -= pos_dy
+            return
+
+        if selectedPosition['position'] == 1:
+            selectedPosition['x'] = event.x
+            selectedPosition['y'] = event.y
+            config['lootPositions']['pos2']['y'] = selectedPosition['y']
+            config['lootPositions']['pos3']['y'] = selectedPosition['y']
+            config['lootPositions']['pos4']['x'] = selectedPosition['x']
+            config['lootPositions']['pos7']['x'] = selectedPosition['x']
+        if selectedPosition['position'] == 2:
+            selectedPosition['y'] = event.y
+            config['lootPositions']['pos1']['y'] = selectedPosition['y']
+            config['lootPositions']['pos3']['y'] = selectedPosition['y']
+        if selectedPosition['position'] == 3:
+            selectedPosition['x'] = event.x
+            selectedPosition['y'] = event.y
+            config['lootPositions']['pos1']['y'] = selectedPosition['y']
+            config['lootPositions']['pos2']['y'] = selectedPosition['y']
+            config['lootPositions']['pos6']['x'] = selectedPosition['x']
+            config['lootPositions']['pos9']['x'] = selectedPosition['x']
+        if selectedPosition['position'] == 4:
+            selectedPosition['x'] = event.x
+            config['lootPositions']['pos1']['x'] = selectedPosition['x']
+            config['lootPositions']['pos7']['x'] = selectedPosition['x']
+        if selectedPosition['position'] == 6:
+            selectedPosition['x'] = event.x
+            config['lootPositions']['pos3']['x'] = selectedPosition['x']
+            config['lootPositions']['pos9']['x'] = selectedPosition['x']
+        if selectedPosition['position'] == 7:
+            selectedPosition['x'] = event.x
+            selectedPosition['y'] = event.y
+            config['lootPositions']['pos8']['y'] = selectedPosition['y']
+            config['lootPositions']['pos9']['y'] = selectedPosition['y']
+            config['lootPositions']['pos4']['x'] = selectedPosition['x']
+            config['lootPositions']['pos1']['x'] = selectedPosition['x']
+        if selectedPosition['position'] == 8:
+            selectedPosition['y'] = event.y
+            config['lootPositions']['pos7']['y'] = selectedPosition['y']
+            config['lootPositions']['pos9']['y'] = selectedPosition['y']
+        if selectedPosition['position'] == 9:
+            selectedPosition['x'] = event.x
+            selectedPosition['y'] = event.y
+            config['lootPositions']['pos7']['y'] = selectedPosition['y']
+            config['lootPositions']['pos8']['y'] = selectedPosition['y']
+            config['lootPositions']['pos6']['x'] = selectedPosition['x']
+            config['lootPositions']['pos3']['x'] = selectedPosition['x']
+
+        config['lootPositions']['pos5']['x'] = ( config['lootPositions']['pos4']['x'] + config['lootPositions']['pos6']['x']) / 2
+        config['lootPositions']['pos5']['y'] = ( config['lootPositions']['pos2']['y'] + config['lootPositions']['pos8']['y']) / 2
+
+        if config['lootPositions']['pos2'] != selectedPosition:
+            config['lootPositions']['pos2']['x'] = ( config['lootPositions']['pos4']['x'] + config['lootPositions']['pos6']['x']) / 2
+
+        if config['lootPositions']['pos8'] != selectedPosition:
+            config['lootPositions']['pos8']['x'] = ( config['lootPositions']['pos4']['x'] + config['lootPositions']['pos6']['x']) / 2
+
+        if config['lootPositions']['pos4'] != selectedPosition:
+            config['lootPositions']['pos4']['y'] = ( config['lootPositions']['pos2']['y'] + config['lootPositions']['pos8']['y']) / 2
+
+        if config['lootPositions']['pos6'] != selectedPosition:
+            config['lootPositions']['pos6']['y'] = ( config['lootPositions']['pos2']['y'] + config['lootPositions']['pos8']['y']) / 2
+        
+        
+
+
         return
 
     if move_status:
@@ -729,6 +805,8 @@ while running:
 
 
     if updatingLootPositions:
-        for position in config['lootPositions']:
+        for key in config['lootPositions']:
+            position = config['lootPositions'][key]
             canvas.create_rectangle(position['x'] - 10, position['y'] - 10, position['x'] + 10, position['y'] + 10, fill='green')
+            canvas.create_text(position['x'], position['y'], text=position['position'], anchor='c', fill='white')
     canvas.update()
