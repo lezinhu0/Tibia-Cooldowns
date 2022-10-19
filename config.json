@@ -4,5 +4,52 @@
     "lastTimerName": "RED PLASMA",
     "lastTimerDuration": "26:00",
     "lastTimerColor": "BLACK",
-    "quicklootHotkey": "alt+q"
+    "quicklootHotkey": "alt+q",
+    "lootPositions": {
+        "pos7": {
+            "position": 7,
+            "x": 872,
+            "y": 385
+        },
+        "pos8": {
+            "position": 8,
+            "x": 941.5,
+            "y": 385
+        },
+        "pos9": {
+            "position": 9,
+            "x": 1011,
+            "y": 385
+        },
+        "pos4": {
+            "position": 4,
+            "x": 872,
+            "y": 450.5
+        },
+        "pos5": {
+            "position": 5,
+            "x": 941.5,
+            "y": 450.5
+        },
+        "pos6": {
+            "position": 6,
+            "x": 1011,
+            "y": 450.5
+        },
+        "pos1": {
+            "position": 1,
+            "x": 872,
+            "y": 516
+        },
+        "pos2": {
+            "position": 2,
+            "x": 941.5,
+            "y": 516
+        },
+        "pos3": {
+            "position": 3,
+            "x": 1011,
+            "y": 516
+        }
+    }
 }
