@@ -4,7 +4,7 @@ import time
 
 class Spell:
 
-    def __init__(self, name, color, duration, cooldown = 0, type = '', property = '', width = 150, height = 20, crosshair = False, x = 0, y = 0):
+    def __init__(self, name, color, duration, cooldown = 0, type = '', property = '', turnCharacter = False, inGamehotkey = None, width = 150, height = 20, crosshair = False, x = 0, y = 0):
         self.name = name
         self.color = color
         self.duration = duration
@@ -17,6 +17,8 @@ class Spell:
         self.crosshair = crosshair
         self.x = x
         self.y = y
+        self.turnCharacter = turnCharacter
+        self.inGameHotkey = inGamehotkey
 
     def __eq__(self, other):
         if other == None:

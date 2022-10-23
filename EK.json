@@ -57,12 +57,15 @@
         "property": "attack"
     },
     "3": {
-        "name": "exori min",
-        "color": "purple",
+        "name": "EXORI MIN",
+        "color": "PURPLE",
         "duration": 6000,
         "cooldown": 2000,
-        "type": null,
-        "property": "attack"
+        "type": "",
+        "property": "attack",
+        "crosshair": false,
+        "turnCharacter": true,
+        "inGameHotkey": "ctrl+3"
     },
     "4": {
         "name": "exori",

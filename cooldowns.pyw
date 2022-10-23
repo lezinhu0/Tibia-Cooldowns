@@ -1,6 +1,4 @@
-from audioop import cross
 import json
-from shutil import move
 import tkinter as tk
 from tkinter import BooleanVar, ttk
 import spell
@@ -14,6 +12,7 @@ import characterService
 import time
 import quickloot
 from pynput import mouse
+import ctypes
 
 requireTibia = True
 running = True
@@ -44,6 +43,12 @@ config = {
         "pos3": { 'position': 3, 'x': 1018, 'y': 507 }
     }
 }
+
+def intersects(x, y, x1, y1, x2, y2):
+    if x >= x1 and x <= x2:
+        if y >= y1 and y <= y2:
+            return True
+    return False
 
 def saveConfigs():
     with open('config.json', 'w') as outfile:
@@ -139,6 +144,16 @@ move_status = False
 offset_status_x = 0
 offset_status_y = 0
 
+user32 = ctypes.windll.user32
+
+turning = False
+player_center_position = {
+    'updating': False,
+    'x': user32.GetSystemMetrics(0) / 2,
+    'y': user32.GetSystemMetrics(1) / 2,
+    'thickness': 3
+}
+
 pressedX = 0
 pressedY = 0
 
@@ -169,6 +184,14 @@ def buttonPressed(event):
     global move_status
     global selectedPosition
     global updatingLootPositions
+
+
+    pressedX = event.x - offsetX
+    pressedY = event.y - offsetY
+
+    if (intersects(event.x, event.y, 1000 + 150 - 50 + offsetX, 350 + offsetY, 1000 + 150 + offsetX - 40, 350 + offsetY + 10)):
+        player_center_position['updating'] = True
+        return        
 
     if attackCd.intersects(event.x, event.y) or healingCd.intersects(event.x, event.y):
         move_status = True
@@ -338,7 +361,7 @@ def buttonPressed(event):
                     tempFrame.pack(expand=True, fill='x', anchor='w')
                 return
 
-            tk.Button(form, text='add', command=lambda: command(worldEntry.get(), levelEntry.get())).grid(row = 4, column = 0)
+            tk.Button(form, text='busca', command=lambda: command(worldEntry.get(), levelEntry.get())).grid(row = 4, column = 0)
             tk.Button(form, text='exit', command=form.destroy).grid(row = 4, column = 2)
 
             return
@@ -467,6 +490,16 @@ def buttonPressed(event):
         alertCheck = tk.Checkbutton(form, variable=alertVar)
         alertCheck.grid(row = 10, column = 1, sticky='w')
 
+        tk.Label(form, text='turn character?').grid(row = 11, column = 0, sticky=tk.W)
+        turnCharacterVar = BooleanVar()
+        turnCharacterCheck = tk.Checkbutton(form, variable=turnCharacterVar)
+        turnCharacterCheck.grid(row = 11, column = 1, sticky='w')
+
+        tk.Label(form, text='in-game hoykey').grid(row = 12, column = 0, sticky=tk.W)
+        inGamehotkeyEnty = tk.Entry(form)
+        inGamehotkeyEnty.grid(row = 12, column = 1)
+        inGamehotkeyEnty.bind('<Key>', lambda e: clearHotkey(e, inGamehotkeyEnty))
+
         def addHk():
             spells[hotkeyEnty.get()] = { 'name': textoEntry.get(), 'color': colorEntry.get(), 'duration': int(durationEntry.get()) * 1000,
             'cooldown': int(cooldownEntry.get()) * 1000, 'type': typeEntry.get() }
@@ -482,20 +515,22 @@ def buttonPressed(event):
             if alertVar.get():
                 spells[hotkeyEnty.get()]['property'] = 'timer'
 
+            if turnCharacterVar.get():
+                spells[hotkeyEnty.get()]['turnCharacter'] = True
+
+            spells[hotkeyEnty.get()]['inGameHotkey'] = inGamehotkeyEnty.get()
+
             form.destroy()
             saveSpells()
             return
 
         buttonsCanvas = tk.Frame(form, bg='black')
-        buttonsCanvas.grid(row = 11, column = 0, columnspan=2)
+        buttonsCanvas.grid(row = 13, column = 0, columnspan=2)
 
         tk.Button(buttonsCanvas, text='add', command=addHk, width=15).pack(side = tk.LEFT, fill = 'x', expand = True)
         tk.Button(buttonsCanvas, text='exit', command=form.destroy, width=15).pack(side = tk.RIGHT, fill = 'x', expand = True)
 
         return
-
-    pressedX = event.x - offsetX
-    pressedY = event.y - offsetY
 
 def rightButtonPressed(event):
     if event.x >= 1000 + offsetX and event.x <= 1000 + offsetX + 150 and event.y >= 325 + offsetY and event.y <= 325 + offsetY + 20:
@@ -509,8 +544,12 @@ def rightButtonPressed(event):
 def buttonReleased(event):
     global move_status
     move_status = False
-
+    global selectedPosition
     selectedPosition = None
+    global move_target_area
+    move_target_area = False
+    global player_center_position
+    player_center_position['updating'] = False
 
 screen.bind('<Button-1>', buttonPressed)
 screen.bind('<ButtonRelease>', buttonReleased)
@@ -524,6 +563,11 @@ def mouseDragged(event):
 
     global offset_status_x
     global offset_status_y
+
+    if (player_center_position['updating']):
+        player_center_position['x'] = event.x
+        player_center_position['y'] = event.y
+        return
 
     if selectedPosition != None:
         pos_dx = selectedPosition['x'] - event.x
@@ -670,7 +714,11 @@ def addSpell(tempSpell):
 
 def key_press(key):
     global config
-    
+    global turning
+
+    if turning:
+        return
+
     if requireTibia and getProcessName() != 'client.exe':
         return
 
@@ -700,8 +748,65 @@ def key_press(key):
     else:
         return
 
+    if selectedSpell.get('turnCharacter'):
+        turning = True
+
+        x = pyautogui.position().x
+        y = pyautogui.position().y
+
+        dx = x - player_center_position['x']
+        dy = y - player_center_position['y']
+
+        keyboard.press('ctrl')
+        time.sleep(0.01)
+        if (abs(dx) > abs(dy)): #HORIZONTAL
+            if (dx > 0):
+                keyboard.press('d')
+                time.sleep(0.01)
+                keyboard.release('d')
+            if (dx < 0):
+                keyboard.press('a')
+                time.sleep(0.01)
+                keyboard.release('a')
+        else: #VERTICAL
+            if (dy > 0):
+                keyboard.press('s')
+                time.sleep(0.01)
+                keyboard.release('s')
+            if (dy < 0):
+                keyboard.press('w')
+                time.sleep(0.01)
+                keyboard.release('w')
+        keyboard.release('ctrl')
+        time.sleep(0.01)
+
+        hotkey = selectedSpell['inGameHotkey']
+        modifiers = []
+        if 'ctrl' in selectedSpell.get('inGameHotkey'):
+            keyboard.press('ctrl')
+            time.sleep(0.01)
+            modifiers.append('ctrl')
+            hotkey = selectedSpell.get('inGameHotkey').replace('ctrl+', '')
+        if 'alt' in selectedSpell.get('inGameHotkey'):
+            keyboard.press('alt')
+            time.sleep(0.01)
+            modifiers.append('alt')
+            hotkey = selectedSpell.get('inGameHotkey').replace('alt+', '')
+        if 'shift' in selectedSpell.get('inGameHotkey'):
+            keyboard.press('shift')
+            time.sleep(0.01)
+            modifiers.append('shift')
+            hotkey = selectedSpell.get('inGameHotkey').replace('shift+', '')
+
+        keyboard.press(hotkey)
+        time.sleep(0.01)
+        keyboard.release(hotkey)
+
+        for key in modifiers:
+            keyboard.release(key)
+        
     tempSpell = spell.Spell(selectedSpell.get('name'), selectedSpell.get('color'), selectedSpell.get('duration'), selectedSpell.get('cooldown'),
-        selectedSpell.get('type'), selectedSpell.get('property'))
+        selectedSpell.get('type'), selectedSpell.get('property'), selectedSpell.get('turnCharacter'), selectedSpell.get('inGameHotkey'))
 
     try:
         tempSpell.crosshair = selectedSpell.get('crosshair')
@@ -713,6 +818,12 @@ def key_press(key):
         crosshair = tempSpell
         return
 
+    def changeTurning():
+        global turning
+        time.sleep(0.01)
+        turning = False
+
+    threading.Thread(target=changeTurning).start()
 
     addSpell(tempSpell)
 
@@ -756,10 +867,29 @@ while running:
 
     canvas.delete('all')
 
+
+    if (player_center_position['updating']):
+        canvas.create_rectangle(
+            player_center_position['x'] - player_center_position['thickness'],
+            player_center_position['y'] - 20,
+            player_center_position['x'] + player_center_position['thickness'],
+            player_center_position['y'] + 20,
+            fill='white'
+        )
+
+        canvas.create_rectangle(
+            player_center_position['x'] - 20,
+            player_center_position['y'] - player_center_position['thickness'],
+            player_center_position['x'] + 20,
+            player_center_position['y'] + player_center_position['thickness'],
+            fill='white'
+        )
+
+
+
     if requireTibia and getProcessName() != 'client.exe' and getProcessName() not in ['python.exe', 'cooldowns.exe']:
         canvas.update()
         continue
-
 
     if not mouseIsOver or keyboard.is_pressed('alt') or not requireTibia:
         lastHeight = 0
@@ -787,6 +917,7 @@ while running:
         canvas.create_rectangle(1000 + 150 - 20 + offsetX, 350 + offsetY, 1000 + 150 + offsetX - 10, 350 + offsetY + 10, fill='yellow')
         canvas.create_rectangle(1000 + 150 - 30 + offsetX, 350 + offsetY, 1000 + 150 + offsetX - 20, 350 + offsetY + 10, fill='green')
         canvas.create_rectangle(1000 + 150 - 40 + offsetX, 350 + offsetY, 1000 + 150 + offsetX - 30, 350 + offsetY + 10, fill='orange')
+        canvas.create_rectangle(1000 + 150 - 50 + offsetX, 350 + offsetY, 1000 + 150 + offsetX - 40, 350 + offsetY + 10, fill='white')
 
         if attackCd:
             tempAttackCd = spell.Spell(name='attackCd', color='yellow', duration=attackCd.duration, cooldown=attackCd.cooldown, width=150, height=5)

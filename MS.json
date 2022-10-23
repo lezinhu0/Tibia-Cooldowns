@@ -100,5 +100,14 @@
         "cooldown": 2000,
         "type": "",
         "property": "attack"
+    },
+    "f11": {
+        "name": "AVALANCHE",
+        "color": "BLUE",
+        "duration": 2000,
+        "cooldown": 2000,
+        "type": "",
+        "property": "attack",
+        "crosshair": true
     }
 }

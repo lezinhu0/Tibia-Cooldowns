@@ -1,6 +1,6 @@
 {
     "world": "venebra",
-    "level": "322",
+    "level": "324",
     "lastTimerName": "RED PLASMA",
     "lastTimerDuration": "26:00",
     "lastTimerColor": "BLACK",
@@ -8,48 +8,48 @@
     "lootPositions": {
         "pos7": {
             "position": 7,
-            "x": 872,
-            "y": 385
+            "x": 858,
+            "y": 370
         },
         "pos8": {
             "position": 8,
-            "x": 941.5,
-            "y": 385
+            "x": 936.0,
+            "y": 370
         },
         "pos9": {
             "position": 9,
-            "x": 1011,
-            "y": 385
+            "x": 1014,
+            "y": 370
         },
         "pos4": {
             "position": 4,
-            "x": 872,
-            "y": 450.5
+            "x": 858,
+            "y": 445.0
         },
         "pos5": {
             "position": 5,
-            "x": 941.5,
-            "y": 450.5
+            "x": 936.0,
+            "y": 445.0
         },
         "pos6": {
             "position": 6,
-            "x": 1011,
-            "y": 450.5
+            "x": 1014,
+            "y": 445.0
         },
         "pos1": {
             "position": 1,
-            "x": 872,
-            "y": 516
+            "x": 858,
+            "y": 520
         },
         "pos2": {
             "position": 2,
-            "x": 941.5,
-            "y": 516
+            "x": 936.0,
+            "y": 520
         },
         "pos3": {
             "position": 3,
-            "x": 1011,
-            "y": 516
+            "x": 1014,
+            "y": 520
         }
     }
 }
