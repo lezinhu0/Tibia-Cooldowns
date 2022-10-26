@@ -858,7 +858,7 @@ while running:
     if len(activeSpells) == 0 and current_mili_time() % processCheckInterval == 0:
         threading.Thread(target=lookForTibia).start()
 
-    if requireTibia and ((mouseX >= 1000 + offsetX and mouseX <= 1150 + offsetX and mouseY <= 360 + offsetY and mouseY >= 320 - (len(activeSpells) * 20) + offsetY) or attackCd.intersects(mouseX, mouseY) or healingCd.intersects(mouseX, mouseY)):
+    if getProcessName() != 'client.exe' and requireTibia and ((mouseX >= 1000 + offsetX and mouseX <= 1150 + offsetX and mouseY <= 360 + offsetY and mouseY >= 320 - (len(activeSpells) * 20) + offsetY) or attackCd.intersects(mouseX, mouseY) or healingCd.intersects(mouseX, mouseY)):
         mouseIsOver = True
         hoverCounter += 1
     else:

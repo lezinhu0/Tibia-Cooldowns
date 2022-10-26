@@ -61,6 +61,6 @@ class Spell:
             canvas.create_rectangle(self.x, self.y, self.x + self.width - (self.width * (self.current_mili_time() - self.start) / self.cooldown), self.y + self.height, fill='black')
 
         canvas.create_text(self.x + 5, self.y + 9, fill='white', text=self.name, anchor='w')
-        canvas.create_text(self.x + self.width - 5, self.y + 9, fill='white', text=round(self.timeLeft(), 1) if self.timeLeft() < 1 else round(self.timeLeft(), 0), anchor='e')
+        canvas.create_text(self.x + self.width - 5, self.y + 9, fill='white', text=round(self.timeLeft(), 1) if self.timeLeft() < 1 else round(self.timeLeft()), anchor='e')
         
         
