@@ -25,6 +25,16 @@ updatingLootPositions = False
 selectedPosition = None
 
 config = {
+    'offsetX': 0,
+    'offsetY': 0,
+    'offset_status_x': 0,
+    'offset_status_y': 0,
+    'player_center_position': {
+        'updating': False,
+        'x': 0,
+        'y': 0,
+        'thickness': 3
+    },
     'world': 'venebra',
     'level': 318,
     'lastTimerName': '',
@@ -54,19 +64,20 @@ def saveConfigs():
     with open('config.json', 'w') as outfile:
         outfile.write(json.dumps(config, indent=4))
 
-try:
-    with open('config.json', 'r') as configFile:
-        tempConfig = json.load(configFile)
+with open('config.json', 'r') as configFile:
+    tempConfig = json.load(configFile)
 
-        if tempConfig['world']: config['world'] = tempConfig['world']
-        if tempConfig['level']: config['level'] = tempConfig['level']
-        if tempConfig['lastTimerName']: config['lastTimerName'] = tempConfig['lastTimerName']
-        if tempConfig['lastTimerDuration']: config['lastTimerDuration'] = tempConfig['lastTimerDuration']
-        if tempConfig['lastTimerColor']: config['lastTimerColor'] = tempConfig['lastTimerColor']
-        if tempConfig['quicklootHotkey']: config['quicklootHotkey'] = tempConfig['quicklootHotkey']
-        if tempConfig['lootPositions']: config['lootPositions'] = tempConfig['lootPositions']
-except:
-    pass
+    params = ['world', 'level', 'lastTimerName', 'lastTimerDuration', 'lastTimerColor', 'quicklootHotkey', 'lootPositions', 'offsetX',
+        'offsetX', 'offsetY', 'offset_status_x', 'offset_status_y', 'player_center_position']
+
+    for param in params:
+        print('looking for the param: ' + param)
+        if param in tempConfig:
+            config[param] = tempConfig[param]
+            print('loading ' + param + ' to config with value: ' + str(tempConfig[param]))
+        else:
+            config[param] = 0
+            print('loading None for param: ' + param)
 
 try:
     print(config['lootPositions']['pos1']['x'] == 0)
@@ -137,22 +148,26 @@ screen.attributes('-alpha', 0.7)
 screen.attributes('-topmost', True)
 #screen.overrideredirect(1)
 
-offsetX = 0
-offsetY = 0
+offsetX = config['offsetX']
+offsetY = config['offsetY']
 
 move_status = False
-offset_status_x = 0
-offset_status_y = 0
+offset_status_x = config['offset_status_x']
+offset_status_y = config['offset_status_y']
 
 user32 = ctypes.windll.user32
 
 turning = False
-player_center_position = {
-    'updating': False,
-    'x': user32.GetSystemMetrics(0) / 2,
-    'y': user32.GetSystemMetrics(1) / 2,
-    'thickness': 3
-}
+if config['player_center_position'] == 0:
+    player_center_position = {
+        'updating': False,
+        'x': user32.GetSystemMetrics(0) / 2,
+        'y': user32.GetSystemMetrics(1) / 2,
+        'thickness': 3
+    }
+else:
+    player_center_position = config['player_center_position']
+
 
 pressedX = 0
 pressedY = 0
@@ -549,7 +564,11 @@ def buttonReleased(event):
     global move_target_area
     move_target_area = False
     global player_center_position
-    player_center_position['updating'] = False
+
+    if player_center_position['updating']:
+        config['player_center_position'] = player_center_position
+        player_center_position['updating'] = False
+        saveConfigs()
 
 screen.bind('<Button-1>', buttonPressed)
 screen.bind('<ButtonRelease>', buttonReleased)
@@ -668,6 +687,12 @@ def mouseDragged(event):
     offset_status_x = event.x - pressedX
     offset_status_y = event.y - pressedY
 
+    config['offsetX'] = offsetX
+    config['offsetY'] = offsetY
+    config['offset_status_x'] = offset_status_x
+    config['offset_status_y'] = offset_status_y
+    saveConfigs()
+
 screen.bind('<B1-Motion>', mouseDragged)
 
 def close(event):
@@ -757,28 +782,25 @@ def key_press(key):
         dx = x - player_center_position['x']
         dy = y - player_center_position['y']
 
+        downTime = 0.03
         keyboard.press('ctrl')
-        time.sleep(0.01)
+        time.sleep(downTime)
+        directionKey = ''
         if (abs(dx) > abs(dy)): #HORIZONTAL
             if (dx > 0):
-                keyboard.press('d')
-                time.sleep(0.01)
-                keyboard.release('d')
+                directionKey = 'right'
             if (dx < 0):
-                keyboard.press('a')
-                time.sleep(0.01)
-                keyboard.release('a')
+                directionKey = 'left'
         else: #VERTICAL
             if (dy > 0):
-                keyboard.press('s')
-                time.sleep(0.01)
-                keyboard.release('s')
+                directionKey = 'down'
             if (dy < 0):
-                keyboard.press('w')
-                time.sleep(0.01)
-                keyboard.release('w')
+                directionKey = 'up'
+        keyboard.press(directionKey)
+        time.sleep(downTime)
+        keyboard.release(directionKey)
+        time.sleep(downTime)
         keyboard.release('ctrl')
-        time.sleep(0.01)
 
         hotkey = selectedSpell['inGameHotkey']
         modifiers = []
@@ -867,7 +889,6 @@ while running:
 
     canvas.delete('all')
 
-
     if (player_center_position['updating']):
         canvas.create_rectangle(
             player_center_position['x'] - player_center_position['thickness'],
@@ -924,6 +945,7 @@ while running:
             tempAttackCd.start = attackCd.start
             tempAttackCd.x = 1000 + offsetX
             tempAttackCd.y = 320 + offsetY
+            tempAttackCd.color = attackCd.color
             tempAttackCd.draw(canvas)
 
             attackCd.x = 1000 + offset_status_x
@@ -941,6 +963,7 @@ while running:
             tempHealing.start = healingCd.start
             tempHealing.x = 1000 + offsetX
             tempHealing.y = 325 + offsetY
+            tempHealing.color = healingCd.color
             tempHealing.draw(canvas)
 
             healingCd.x = 1000 + offset_status_x

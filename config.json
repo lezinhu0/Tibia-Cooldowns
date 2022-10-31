@@ -1,55 +1,66 @@
 {
+    "offsetX": 264,
+    "offsetY": -42,
+    "offset_status_x": 3,
+    "offset_status_y": 56,
+    "player_center_position": {
+        "updating": false,
+        "x": 928,
+        "y": 515,
+        "thickness": 3
+    },
     "world": "venebra",
     "level": "324",
     "lastTimerName": "RED PLASMA",
     "lastTimerDuration": "26:00",
     "lastTimerColor": "BLACK",
-    "quicklootHotkey": "alt+q",
+    "quicklootHotkey": "shift+home",
     "lootPositions": {
         "pos7": {
             "position": 7,
-            "x": 858,
-            "y": 370
+            "x": 871,
+            "y": 361
         },
         "pos8": {
             "position": 8,
-            "x": 936.0,
-            "y": 370
+            "x": 943,
+            "y": 361
         },
         "pos9": {
             "position": 9,
-            "x": 1014,
-            "y": 370
+            "x": 1018,
+            "y": 361
         },
         "pos4": {
             "position": 4,
-            "x": 858,
-            "y": 445.0
+            "x": 871,
+            "y": 436
         },
         "pos5": {
             "position": 5,
-            "x": 936.0,
-            "y": 445.0
+            "x": 943,
+            "y": 436
         },
         "pos6": {
             "position": 6,
-            "x": 1014,
-            "y": 445.0
+            "x": 1018,
+            "y": 436
         },
         "pos1": {
             "position": 1,
-            "x": 858,
-            "y": 520
+            "x": 871,
+            "y": 507
         },
         "pos2": {
             "position": 2,
-            "x": 936.0,
-            "y": 520
+            "x": 943,
+            "y": 507
         },
         "pos3": {
             "position": 3,
-            "x": 1014,
-            "y": 520
+            "x": 1018,
+            "y": 507
         }
-    }
+    },
+    "quickLootHotkey": null
 }
